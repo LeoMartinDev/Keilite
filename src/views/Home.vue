@@ -60,20 +60,20 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { mapGetters, mapActions } from "vuex";
-import CharacterAvatar from "@/components/characters/CharacterAvatar.vue";
-import CharacterListItem from "@/components/characters/CharacterListItem.vue";
-import CharacterClassSelectField from "@/components/characters/CharacterClassSelectField.vue";
-import { Character } from "@/store/characters/types";
-import { Process } from "@/store/processes/types";
+import Vue from 'vue';
+import { mapGetters, mapActions } from 'vuex';
+import CharacterAvatar from '@/components/characters/CharacterAvatar.vue';
+import CharacterListItem from '@/components/characters/CharacterListItem.vue';
+import CharacterClassSelectField from '@/components/characters/CharacterClassSelectField.vue';
+import { Character } from '@/store/characters/types';
+import { Process } from '@/store/processes/types';
 // @ts-ignore
-import draggable from "vuedraggable";
-import { ShortcutsEmitterSingleton } from "@/services/shortcuts-emitter-singleton";
-import { ShortcutsEmitter } from "@/background/shortcuts/renderer";
-import { Dictionary } from "vue-router/types/router";
-import { join } from "path";
-import { clone } from "lodash";
+import draggable from 'vuedraggable';
+import { ShortcutsEmitterSingleton } from '@/services/shortcuts-emitter-singleton';
+import { ShortcutsEmitter } from '@/background/shortcuts/renderer';
+import { Dictionary } from 'vue-router/types/router';
+import { join } from 'path';
+import { clone } from 'lodash';
 
 interface Data {
   options: {
@@ -87,25 +87,25 @@ interface Data {
 }
 
 export default Vue.extend({
-  name: "Home",
+  name: 'Home',
   components: {
     draggable,
     CharacterAvatar,
     CharacterListItem,
-    CharacterClassSelectField
+    CharacterClassSelectField,
   },
   data: (): Data => ({
     options: {
       animation: 0,
-      group: "connectedCharacters",
-      ghostClass: "ghost"
+      group: 'connectedCharacters',
+      ghostClass: 'ghost',
     },
     focusedProcessIndex: 0,
     editCharacterDialog: false,
-    toEditCharacter: null
+    toEditCharacter: null,
   }),
   methods: {
-    ...mapActions("characters", ["focusCharacter"]),
+    ...mapActions('characters', ['focusCharacter']),
     updateCharactersList(list: string[]) {
       this.$store.dispatch('characters/updateCharactersList', list);
     },
@@ -114,11 +114,11 @@ export default Vue.extend({
       this.editCharacterDialog = true;
     },
     toggleFocusable(character: Character, value: boolean) {
-      this.$store.dispatch("characters/updateCharacter", {
+      this.$store.dispatch('characters/updateCharacter', {
         name: character.name,
         payload: {
-          isFocusable: value
-        }
+          isFocusable: value,
+        },
       });
     },
     closeEditCharacter() {
@@ -126,20 +126,20 @@ export default Vue.extend({
       const payload = clone(this.toEditCharacter);
 
       if (payload) {
-        this.$store.dispatch("characters/updateCharacter", {
+        this.$store.dispatch('characters/updateCharacter', {
           name: payload.name,
-          payload
+          payload,
         });
       }
       this.toEditCharacter = null;
-    }
+    },
   },
   computed: {
     characters(): Dictionary<Character> {
-      return this.$store.getters["characters/characters"];
+      return this.$store.getters['characters/characters'];
     },
     mappedCharactersList(): Character[] {
-      return this.$store.getters["characters/mappedCharactersList"];
+      return this.$store.getters['characters/mappedCharactersList'];
     },
     list: {
       get(): Character[] {
@@ -147,14 +147,14 @@ export default Vue.extend({
       },
       set(value: Character[]) {
         this.updateCharactersList(
-          value.filter((c: Character) => !!c).map((c: Character) => c.name)
+          value.filter((c: Character) => !!c).map((c: Character) => c.name),
         );
-      }
+      },
     },
     chachaImage() {
-      return join(__static, "images/chacha.png");
-    }
-  }
+      return join(__static, 'images/chacha.png');
+    },
+  },
 });
 </script>
 

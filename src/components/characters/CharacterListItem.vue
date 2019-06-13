@@ -62,21 +62,21 @@
 
 
 <script lang="ts">
-import Vue from "vue";
-import CharacterAvatar from "./CharacterAvatar.vue";
-import { Character } from "@/store/characters/types";
+import Vue from 'vue';
+import CharacterAvatar from './CharacterAvatar.vue';
+import { Character } from '@/store/characters/types';
 
 export default Vue.extend({
   components: { CharacterAvatar },
   props: {
     character: {
       type: Object as () => Character,
-      required: true
+      required: true,
     },
     line: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     isFocusable: {
@@ -84,9 +84,9 @@ export default Vue.extend({
         return this.character.isFocusable;
       },
       set(value: boolean) {
-        this.$emit("toggleFocusable", value);
-      }
-    }
-  }
+        this.$emit('toggleFocusable', value);
+      },
+    },
+  },
 });
 </script>

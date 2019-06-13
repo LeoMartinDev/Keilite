@@ -32,18 +32,18 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { Character } from "../../store/characters/types";
-import { getAvatar } from "./lib";
-import { classNames } from "./constants";
-import { clone, merge, isNull } from "lodash";
+import Vue from 'vue';
+import { clone, merge, isNull } from 'lodash';
+import { Character } from '../../store/characters/types';
+import { getAvatar } from './lib';
+import { classNames } from './constants';
 
 export default Vue.extend({
   props: {
     value: {
       type: Object as () => Character,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
     getAvatar,
@@ -55,19 +55,19 @@ export default Vue.extend({
           .toLowerCase()
           .indexOf(query.toString().toLowerCase()) > -1
       );
-    }
+    },
   },
   computed: {
     classes() {
       return classNames.reduce(
         (accumulator: any[], className: string) => {
           accumulator.push(
-            { className, gender: "male", slug: `${className}-male` },
-            { className, gender: "female", slug: `${className}-female` }
+            { className, gender: 'male', slug: `${className}-male` },
+            { className, gender: 'female', slug: `${className}-female` },
           );
           return accumulator;
         },
-        [] as Array<any>
+        [] as Array<any>,
       );
     },
     selectedClass: {
@@ -77,18 +77,17 @@ export default Vue.extend({
       set(value: string) {
         if (!value) return;
         const character = clone(this.value);
-        const [className, gender] = value.split("-");
-        
+        const [className, gender] = value.split('-');
+
         this.$emit(
-          "input",
+          'input',
           merge(character, {
             className,
-            gender
-          })
+            gender,
+          }),
         );
-      }
-    }
-  }
+      },
+    },
+  },
 });
 </script>
-

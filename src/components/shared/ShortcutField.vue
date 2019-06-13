@@ -13,16 +13,16 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import { clone } from "lodash";
-import { mapActions } from "vuex";
+import Vue from 'vue';
+import { clone } from 'lodash';
+import { mapActions } from 'vuex';
 
 export const modifiers: { [Key: number]: string } = {
-  16: "Shift",
-  17: "Control",
-  18: "Alt",
-  91: "Command",
-  93: "Command"
+  16: 'Shift',
+  17: 'Control',
+  18: 'Alt',
+  91: 'Command',
+  93: 'Command',
 };
 
 export function isModifierKey(keyCode: number) {
@@ -43,23 +43,23 @@ export default Vue.extend({
     oldValue: [],
     keyEvents: [],
     isComplete: false,
-    internalErrorMessages: []
+    internalErrorMessages: [],
   }),
   props: {
     value: {
       type: Array,
-      required: true
+      required: true,
     },
     label: {
       type: String,
-      required: true
+      required: true,
     },
     errorMessages: {
-      type: Array
+      type: Array,
     },
     separator: {
       default: '+',
-    }
+    },
   },
   methods: {
     keydown(event: any) {
@@ -67,20 +67,20 @@ export default Vue.extend({
       if (!this.isComplete && this.keyEvents.length < 2 && !event.repeat) {
         if (this.keyEvents.length === 0 && !isModifierKey(event.keyCode)) {
           this.internalErrorMessages = [
-            "La première entrée doit être un accélerateur!"
+            'La première entrée doit être un accélerateur!',
           ];
           return;
-        } else {
-          this.internalErrorMessages = [];
         }
+        this.internalErrorMessages = [];
+
         if (this.keyEvents.length === 1 && isModifierKey(event.keyCode)) {
           this.internalErrorMessages = [
-            "La deuxième entrée ne peut être un accélérateur!"
+            'La deuxième entrée ne peut être un accélérateur!',
           ];
           return;
-        } else {
-          this.internalErrorMessages = [];
         }
+        this.internalErrorMessages = [];
+
         this.keyEvents.push(event);
         this.internalValue.push(event.key);
       }
@@ -89,7 +89,7 @@ export default Vue.extend({
       }
     },
     focus(event: MouseEvent) {
-      this.$emit("focus", event);
+      this.$emit('focus', event);
       this.isComplete = false;
       this.keyEvents = [];
       this.internalValue = [];
@@ -101,8 +101,8 @@ export default Vue.extend({
         this.oldValue = this.internalValue;
       }
       this.isComplete = false;
-      this.$emit("blur", event);
-    }
+      this.$emit('blur', event);
+    },
   },
   watch: {
     value: {
@@ -115,13 +115,13 @@ export default Vue.extend({
           this.isComplete = false;
         }
       },
-      immediate: true
+      immediate: true,
     },
     isComplete(value: boolean) {
       if (value === true) {
         this.internalErrorMessages = [];
         (this.$refs.field as HTMLElement).blur();
-        this.$emit("input", this.internalValue);
+        this.$emit('input', this.internalValue);
       }
     },
     internalErrorMessages(newValue, oldValue) {
@@ -135,13 +135,13 @@ export default Vue.extend({
       handler(value: string[]) {
         this.internalErrorMessages = value;
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   computed: {
     display(): string {
       return this.internalValue.join(this.separator);
-    }
-  }
+    },
+  },
 });
 </script>

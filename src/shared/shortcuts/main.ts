@@ -49,7 +49,10 @@ export class ShortcutsMain {
   }
 
   public destroy() {
-    Object.values(shortcutsEvents).forEach((eventName: string) => ipcMain.removeListener(eventName, this.handlers[eventName]));
+    Object.values(mainShortcutsEvents).forEach((eventName: string) => {
+      ipcMain.removeListener(eventName, this.handlers[eventName]);
+      this.handlers[eventName] = null;
+    });
     globalShortcut.unregisterAll();
   }
 }

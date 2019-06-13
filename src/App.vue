@@ -20,32 +20,32 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import KeiliteNavBar from "@/components/app/NavBar.vue";
-import KeiliteMainNavigationDrawer from "@/components/app/MainNavigationDrawer.vue";
-import { ShortcutsEmitterSingleton } from "@/services/shortcuts-emitter-singleton";
-import { DofusWindowEmitterSingleton } from "@/services/dofus-window-emitter-singleton";
-import { mapGetters, mapActions, Dictionary } from "vuex";
-import { RawProcess } from "@/background/native-process";
-import { AppSettings, SHORTCUTS_SEPARATOR, EAppShortcuts } from "./store/app/types";
-import { throttle } from "lodash";
+import Vue from 'vue';
+import KeiliteNavBar from '@/components/app/NavBar.vue';
+import KeiliteMainNavigationDrawer from '@/components/app/MainNavigationDrawer.vue';
+import { ShortcutsEmitterSingleton } from '@/services/shortcuts-emitter-singleton';
+import { DofusWindowEmitterSingleton } from '@/services/dofus-window-emitter-singleton';
+import { mapGetters, mapActions, Dictionary } from 'vuex';
+import { RawProcess } from '@/background/native-process';
+import { throttle } from 'lodash';
+import { AppSettings, SHORTCUTS_SEPARATOR, EAppShortcuts } from './store/app/types';
 
 interface Data {
   onShortcutHandler: any;
 }
 
 export default Vue.extend({
-  name: "app",
+  name: 'app',
   components: { KeiliteNavBar, KeiliteMainNavigationDrawer },
   beforeMount() {
     ShortcutsEmitterSingleton.getInstance();
     DofusWindowEmitterSingleton.getInstance();
   },
   mounted() {
-    DofusWindowEmitterSingleton.instance.on("connected", this.onDofusConnected);
+    DofusWindowEmitterSingleton.instance.on('connected', this.onDofusConnected);
     DofusWindowEmitterSingleton.instance.on(
-      "disconnected",
-      this.onDofusDisconnected
+      'disconnected',
+      this.onDofusDisconnected,
     );
     this.toggleShortcuts(this.shortcutsEnabled);
   },
@@ -54,27 +54,27 @@ export default Vue.extend({
     DofusWindowEmitterSingleton.destroy();
   },
   data: (): Data => ({
-    onShortcutHandler: null
+    onShortcutHandler: null,
   }),
   methods: {
     focusNextCharacter(): Promise<void> {
-      return this.$store.dispatch("characters/focusNextCharacter");
+      return this.$store.dispatch('characters/focusNextCharacter');
     },
     focusPreviousCharacter(): Promise<void> {
-      return this.$store.dispatch("characters/focusPreviousCharacter");
+      return this.$store.dispatch('characters/focusPreviousCharacter');
     },
     addProcess(process: RawProcess): Promise<void> {
-      return this.$store.dispatch("processes/addProcess", process);
+      return this.$store.dispatch('processes/addProcess', process);
     },
     removeProcess(process: RawProcess): Promise<void> {
-      return this.$store.dispatch("processes/removeProcess", process);
+      return this.$store.dispatch('processes/removeProcess', process);
     },
     toggleShortcuts(value: boolean): Promise<void> {
-      return this.$store.dispatch("app/toggleShortcuts", value);
+      return this.$store.dispatch('app/toggleShortcuts', value);
     },
     async onShortcut(shortcut: string) {
       const shortcutName = this.shortcutsMap[shortcut];
-      
+
       if (shortcutName === EAppShortcuts.FOCUS_NEXT_CHARACTER) {
         await this.focusNextCharacter();
       } else if (shortcutName === EAppShortcuts.FOCUS_NEXT_CHARACTER) {
@@ -87,7 +87,7 @@ export default Vue.extend({
     },
     onDofusDisconnected(rawProcess: RawProcess) {
       this.removeProcess(rawProcess);
-    }
+    },
   },
   watch: {
     shortcutsEnabled: {
@@ -95,42 +95,40 @@ export default Vue.extend({
         if (value) {
           this.onShortcutHandler = throttle(this.onShortcut.bind(this), 100);
           ShortcutsEmitterSingleton.instance.on(
-            "shortcut",
-            this.onShortcutHandler
+            'shortcut',
+            this.onShortcutHandler,
           );
-        } else {
-          if (this.onShortcutHandler) {
-            ShortcutsEmitterSingleton.instance.removeListener(
-              "shortcut",
-              this.onShortcutHandler
-            );
-            this.onShortcutHandler = null;
-          }
+        } else if (this.onShortcutHandler) {
+          ShortcutsEmitterSingleton.instance.removeListener(
+            'shortcut',
+            this.onShortcutHandler,
+          );
+          this.onShortcutHandler = null;
         }
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   computed: {
     shortcutsEnabled(): boolean {
       return this.$store.getters['app/shortcutsEnabled'];
     },
     settings(): AppSettings {
-      return this.$store.getters["app/settings"];
+      return this.$store.getters['app/settings'];
     },
     shortcutsMap: {
       get(): Dictionary<EAppShortcuts> {
         return Object.entries(this.settings.shortcuts).reduce(
           (accumulator: Dictionary<string>, value: any[]) => {
-            console.log('value :: ', value)
+            console.log('value :: ', value);
             accumulator[value[1].join(SHORTCUTS_SEPARATOR)] = value[0];
 
             return accumulator;
           },
-          {}
+          {},
         );
-      }
-    }
-  }
+      },
+    },
+  },
 });
 </script>

@@ -1,3 +1,4 @@
+import { AppIpcMain } from './shared/app-ipc/main';
 import { app, protocol, BrowserWindow, Tray, Menu, MenuItem } from 'electron';
 import {
   createProtocol,
@@ -21,6 +22,7 @@ let win: Electron.BrowserWindow | null;
 let tray: Electron.Tray | null;
 let settings: StoreSettings;
 let shortcutsMain: ShortcutsMain;
+let appIpcMain: AppIpcMain;
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true } }]);
 
@@ -56,6 +58,7 @@ function createTray() {
     }
   });
   tray.setContextMenu(trayContextMenu);
+  appIpcMain = new AppIpcMain(win as BrowserWindow, tray, trayContextMenu);
 }
 
 function createWindow() {
@@ -69,8 +72,8 @@ function createWindow() {
   win = new BrowserWindow({
     x: windowState.x,
     y: windowState.y,
-    width: windowState.width,
-    height: windowState.height,
+    width: WINDOW_WIDTH,
+    height: WINDOW_HEIGHT,
     frame: true,
     resizable: false,
     fullscreenable: false,
@@ -113,6 +116,7 @@ function quit() {
   log.info('App is quiting...');
   app.isQuiting = true;
   shortcutsMain.destroy();
+  appIpcMain.destroy();
   if (win) {
     win = null;
   }
