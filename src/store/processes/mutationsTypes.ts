@@ -1,0 +1,5 @@
+export const ADD_PROCESS = 'ADD_PROCESS';
+
+export const REMOVE_PROCESS = 'REMOVE_PROCESS';
+
+export const UPDATE_PROCESS = 'UPDATE_PROCESS';

@@ -1,0 +1,33 @@
+html {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: initial !important;
+}
+
+.keilite__app {
+  height: 100vh!important;
+  overflow: hidden!important;
+}
+
+.keilite__scroll-container {
+  height: 100%;
+  overflow-y: auto;
+  backface-visibility: hidden;
+}
+
+.keilite__drag-region {
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+}
+
+.keilite__no-drag-region {
+  -webkit-app-region: no-drag;
+}
+
+.keilite__unselectable {
+  user-select: none;
+}
+
+.keilite__selectable {
+  user-select: auto;
+}
