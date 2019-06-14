@@ -4,6 +4,7 @@ import { shortcutsEvents } from './types';
 
 declare interface ShortcutsEmitter {
   on(event: 'shortcut', listener: (shortcut: string) => void): this;
+  removeListener(event: 'shortcut', listener: () => void): this;
 }
 
 class ShortcutsEmitter extends EventEmitter {
@@ -65,6 +66,7 @@ class ShortcutsEmitter extends EventEmitter {
   }
 
   private _onShortcutPressed(event: Electron.Event, shortcut: string) {
+    console.log('_onShortcutPressed')
     this.emit('shortcut', shortcut);
   }
 }

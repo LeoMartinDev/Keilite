@@ -26,7 +26,7 @@ export class ShortcutsMain {
       if (!globalShortcut.isRegistered(shortcut)) {
         const success = globalShortcut.register(shortcut, () => {
           log.info(`Shortcut "${shortcut}" pressed`);
-          sender.send(shortcutsEvents.REGISTER_SHORTCUT, shortcut);
+          sender.send(shortcutsEvents.SHORTCUT_PRESSED, shortcut);
         });
         log.info(`${shortcutsEvents.REGISTER_SHORTCUT} "${shortcut}" ${success ? 'success' : 'fail'} !`);
         return event.returnValue = success;

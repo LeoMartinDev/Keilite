@@ -84,6 +84,7 @@ export default Vue.extend({
       return this.$store.dispatch('app/toggleShortcuts', value);
     },
     async onShortcut(shortcut: string) {
+      console.log('onshortcut :: ', shortcut);
       const shortcutName = this.shortcutsMap[shortcut];
 
       if (shortcutName === (EAppShortcuts.FOCUS_NEXT_CHARACTER as string)) {
@@ -104,6 +105,7 @@ export default Vue.extend({
     shortcutsEnabled: {
       handler(value: boolean) {
         if (value) {
+          console.log('short cut handler true');
           this.onShortcutHandler = throttle(this.onShortcut.bind(this), 100);
           this.shortcutsEmitter.on('shortcut', this.onShortcutHandler);
         } else if (this.onShortcutHandler) {

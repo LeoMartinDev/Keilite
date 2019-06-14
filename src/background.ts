@@ -24,6 +24,7 @@ let tray: Electron.Tray | null;
 let settings: StoreSettings;
 let shortcutsMain: ShortcutsMain;
 let appIpcMain: AppIpcMain;
+let windowState: any;
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: true, supportFetchAPI: true, secure: true } }]);
 
@@ -62,13 +63,12 @@ function createTray() {
 }
 
 function createWindow() {
-  const windowState = windowStateKeeper({
+  windowState = windowStateKeeper({
     fullScreen: false,
     maximize: false,
     defaultWidth: WINDOW_WIDTH,
     defaultHeight: WINDOW_HEIGHT,
   });
-
   win = new BrowserWindow({
     x: windowState.x,
     y: windowState.y,
@@ -77,11 +77,13 @@ function createWindow() {
     frame: true,
     resizable: false,
     fullscreenable: false,
+    useContentSize: false,
     show: false,
     webPreferences: {
       webSecurity: false,
       nodeIntegration: true,
     },
+    icon: join(__static, 'favicon.ico'),
   });
   windowState.manage(win);
   createTray();
@@ -115,6 +117,7 @@ function createWindow() {
 function quit() {
   log.info('App is quiting...');
   isQuiting = true;
+  windowState.unmanage();
   shortcutsMain.destroy();
   appIpcMain.destroy();
   if (win) {
