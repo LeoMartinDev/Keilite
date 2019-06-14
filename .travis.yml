@@ -1,0 +1,24 @@
+os: windows
+
+language: node_js
+node_js:
+  - "10"
+
+cache:
+  directories:
+    - $HOME/.cache/electron
+    - $HOME/.cache/electron-builder
+    - $HOME/.npm/_prebuilds
+
+before_cache:
+  - rm -rf $HOME/.cache/electron-builder/wine
+
+script:
+  - echo "DisableArchiveScanning..."
+  - powershell Start-Process -PassThru -Wait PowerShell -ArgumentList "'-Command Set-MpPreference -DisableArchiveScanning \$true'"
+  - echo "DisableBehaviorMonitoring..."
+  - powershell Start-Process -PassThru -Wait PowerShell -ArgumentList "'-Command Set-MpPreference -DisableBehaviorMonitoring \$true'"
+  - echo "DisableRealtimeMonitoring..."
+  - powershell Start-Process -PassThru -Wait PowerShell -ArgumentList "'-Command Set-MpPreference -DisableRealtimeMonitoring \$true'"
+  - echo "Running yarn release..."
+  - yarn release --win;

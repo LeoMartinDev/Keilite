@@ -8,6 +8,7 @@ module.exports = {
       nodeModulesPath: ['./node_modules'],
       win: {
         icon: './public/favicon.ico',
+        publish: ['github'],
       },
     },
   },
