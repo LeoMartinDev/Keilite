@@ -16,4 +16,4 @@ before_cache:
 
 script:
   - echo "Deploy windows version to GitHub"
-  - if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ "$TRAVIS_OS_NAME" == "osx" ]]; then yarn release --win; fi
+  - if [[ "$TRAVIS_BRANCH" == "master" ]] && [[ "$TRAVIS_OS_NAME" == "windows" ]]; then yarn release --win; fi
