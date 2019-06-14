@@ -12,6 +12,7 @@ export class ShortcutsMain {
 
   private registerShortcuts() {
     Object.values(mainShortcutsEvents).forEach((eventName: string) => {
+      // @ts-ignore
       this.handlers[eventName] = this[eventName].bind(this);
       ipcMain.on(eventName, this.handlers[eventName]);
     });

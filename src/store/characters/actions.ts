@@ -1,11 +1,10 @@
-import { Process } from './../processes/types';
+import { Process, RawProcess } from './../processes/types';
 import { ADD_CHARACTER, REMOVE_CHARACTER, UPDATE_CHARACTER, ADD_CHARACTER_TO_LIST, UPDATE_CHARACTERS_LIST, UPDATE_FOCUSED_CHARACTER_INDEX, REMOVE_CHARACTER_FROM_LIST } from './mutationsTypes';
 import { CharactersState, Character, CharacterStatus } from './types';
 import { RootState } from '../types';
 import { ActionTree } from 'vuex';
 import { windowTitleToCharacterName } from './helpers';
 import { setProcessToForeground } from 'native-process';
-import { RawProcess } from '@/shared/native-process';
 
 export const actions: ActionTree<CharactersState, RootState> = {
   async focusNextCharacter({ getters, dispatch }) {
@@ -17,6 +16,10 @@ export const actions: ActionTree<CharactersState, RootState> = {
       } else {
         nextCharacterIndex = getters.focusedCharacterIndex + 1;
       }
+    } else if (getters.focusableCharactersList.length === 1) {
+      nextCharacterIndex = 0;
+    } else {
+      return;
     }
     dispatch('focusCharacter', nextCharacterIndex);
   },
@@ -29,6 +32,10 @@ export const actions: ActionTree<CharactersState, RootState> = {
       } else {
         previousCharacterIndex = getters.focusedCharacterIndex - 1;
       }
+    } else if (getters.focusableCharactersList.length === 1) {
+      previousCharacterIndex = 0;
+    } else {
+      return;
     }
     dispatch('focusCharacter', previousCharacterIndex);
   },

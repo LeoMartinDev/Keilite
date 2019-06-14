@@ -20,9 +20,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { mapGetters, mapActions } from 'vuex';
-import { ShortcutsEmitterSingleton } from '@/services/shortcuts-emitter-singleton';
-import { ShortcutsEmitter } from '@/background/shortcuts/renderer';
-import { Dictionary } from 'vue-router/types/router';
 import { AppSettings } from '../../store/app/types';
 
 export default Vue.extend({

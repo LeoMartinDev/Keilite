@@ -3,6 +3,7 @@ import { StoreSettings } from '../defaults';
 import Store from 'electron-store';
 import { ipcMain } from 'electron';
 import { appIpcEvents } from './types';
+import log from 'electron-log';
 
 const store = new Store();
 
@@ -15,12 +16,14 @@ export class AppIpcMain {
     private menu: Electron.Menu,
   ) {
     Object.values(appIpcEvents).forEach((eventName: string) => {
+      // @ts-ignore
       this.handlers[eventName] = this[eventName].bind(this);
       ipcMain.on(eventName, this.handlers[eventName]);
     })
   }
 
   [appIpcEvents.UPDATE_SHARED_SETTINGS](event: Electron.Event, payload: Partial<StoreSettings>) {
+    log.info(`${appIpcEvents.UPDATE_SHARED_SETTINGS}`, payload);
     const storedSettings: StoreSettings = store.get('settings') as StoreSettings;
 
     store.set('settings', {
@@ -30,7 +33,7 @@ export class AppIpcMain {
   }
 
   [appIpcEvents.TOGGLE_SHORTCUTS](event: Electron.Event, payload: boolean) {
-    const item = this.menu.items.find((item: any) => item.id === 'enableShortcutsOnStart');
+    const item = this.menu.items.find((item: any) => item.id === 'shortcutsEnabled');
 
     if (item) {
       item.checked = payload;
@@ -38,8 +41,8 @@ export class AppIpcMain {
     }
   }
 
-  toggleShortcuts(win: Electron.BrowserWindow, value: boolean) {
-    win.webContents.send(appIpcEvents.UPDATE_SHARED_SETTINGS, value);
+  toggleShortcuts(value: boolean) {
+    this.win.webContents.send(appIpcEvents.TOGGLE_SHORTCUTS, value);
   }
 
   destroy() {

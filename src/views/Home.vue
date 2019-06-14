@@ -61,17 +61,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { mapGetters, mapActions } from 'vuex';
-import CharacterAvatar from '@/components/characters/CharacterAvatar.vue';
+import { mapGetters, mapActions, Dictionary } from 'vuex';
 import CharacterListItem from '@/components/characters/CharacterListItem.vue';
 import CharacterClassSelectField from '@/components/characters/CharacterClassSelectField.vue';
 import { Character } from '@/store/characters/types';
 import { Process } from '@/store/processes/types';
 // @ts-ignore
 import draggable from 'vuedraggable';
-import { ShortcutsEmitterSingleton } from '@/services/shortcuts-emitter-singleton';
-import { ShortcutsEmitter } from '@/background/shortcuts/renderer';
-import { Dictionary } from 'vue-router/types/router';
 import { join } from 'path';
 import { clone } from 'lodash';
 
@@ -90,7 +86,6 @@ export default Vue.extend({
   name: 'Home',
   components: {
     draggable,
-    CharacterAvatar,
     CharacterListItem,
     CharacterClassSelectField,
   },

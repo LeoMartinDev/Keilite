@@ -5,7 +5,7 @@ import {
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib';
 import {ShortcutsMain} from './shared/shortcuts/main';
-import './shared/logger';
+import './background/logger';
 import log from 'electron-log';
 import windowStateKeeper from 'electron-window-state';
 import { join } from 'path';
@@ -14,6 +14,7 @@ import { DEFAULT_STORE_SETTINGS, StoreSettings } from './shared/defaults';
 
 const store = new Store();
 const isDevelopment = process.env.NODE_ENV !== 'production';
+let isQuiting = false;
 
 const WINDOW_HEIGHT = 550;
 const WINDOW_WIDTH = 400;
@@ -24,7 +25,7 @@ let settings: StoreSettings;
 let shortcutsMain: ShortcutsMain;
 let appIpcMain: AppIpcMain;
 
-protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true } }]);
+protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: true, supportFetchAPI: true, secure: true } }]);
 
 function createTray() {
   tray = new Tray(join(__static, 'favicon.ico'));
@@ -32,12 +33,11 @@ function createTray() {
     {
       label: 'Activer les raccourcis',
       type: 'checkbox',
-      id: 'enableShortcutsOnStart',
+      id: 'shortcutsEnabled',
       click: (item: MenuItem, window: BrowserWindow, event: Electron.Event) => {
         const isActivated = item.checked;
 
-        store.set('settings.enableShortcutsOnStart', isActivated);
-        // TODO notify renderer
+        appIpcMain.toggleShortcuts(isActivated);
       },
       checked: settings.enableShortcutsOnStart,
     },
@@ -63,17 +63,17 @@ function createTray() {
 
 function createWindow() {
   const windowState = windowStateKeeper({
-    defaultWidth: WINDOW_WIDTH,
-    defaultHeight: WINDOW_HEIGHT,
     fullScreen: false,
     maximize: false,
+    defaultWidth: WINDOW_WIDTH,
+    defaultHeight: WINDOW_HEIGHT,
   });
 
   win = new BrowserWindow({
     x: windowState.x,
     y: windowState.y,
-    width: WINDOW_WIDTH,
-    height: WINDOW_HEIGHT,
+    width: windowState.width,
+    height: windowState.height,
     frame: true,
     resizable: false,
     fullscreenable: false,
@@ -85,9 +85,9 @@ function createWindow() {
   });
   windowState.manage(win);
   createTray();
-  if (!isDevelopment) {
+/*   if (!isDevelopment) {
     win.setMenu(null);
-  }
+  } */
   shortcutsMain = new ShortcutsMain();
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
@@ -102,7 +102,7 @@ function createWindow() {
     }
   });
   win.on('close', (event: Electron.Event) => {
-    if (!app.isQuiting) {
+    if (!isQuiting) {
       event.preventDefault();
       if (win) {
         win.hide();
@@ -114,13 +114,14 @@ function createWindow() {
 
 function quit() {
   log.info('App is quiting...');
-  app.isQuiting = true;
+  isQuiting = true;
   shortcutsMain.destroy();
   appIpcMain.destroy();
   if (win) {
     win = null;
   }
   if (tray) {
+    tray.destroy();
     tray = null;
   }
   app.quit();
@@ -131,11 +132,14 @@ app.on('ready', async () => {
     // Install Vue Devtools
     await installVueDevtools(true);
   }
-  settings = store.get('settings');
+  settings = store.get('settings') as StoreSettings;
+  // TODO fix enable shortcuts on start not working
   if (!settings) {
     store.set('settings', DEFAULT_STORE_SETTINGS);
     settings = DEFAULT_STORE_SETTINGS;
+    log.info('Shared settings not found, using defaults.');
   }
+  log.info('Shared settings :', settings);
   createWindow();
 });
 

@@ -1,14 +1,18 @@
 import { StoreSettings } from '../defaults';
-import { AppIpcEvents } from './main';
-import { EventEmitter, ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
+import { appIpcEvents } from './types';
+import { EventEmitter } from 'events';
 
-export class AppIpcRenderer extends EventEmitter {
+declare interface AppIpcRenderer {
+  on(event: 'toggle-shortcuts', listener: (value: boolean) => void): this;
+}
+class AppIpcRenderer extends EventEmitter {
   private toggleShortcutsHandler: any;
 
   constructor() {
     super();
     this.toggleShortcutsHandler = this.onToggleShortcuts.bind(this),
-    ipcRenderer.on(AppIpcEvents.TOGGLE_SHORTCUTS, this.toggleShortcutsHandler);
+    ipcRenderer.on(appIpcEvents.TOGGLE_SHORTCUTS, this.toggleShortcutsHandler);
   }
 
   private onToggleShortcuts(event: Electron.Event, value: boolean) {
@@ -16,15 +20,17 @@ export class AppIpcRenderer extends EventEmitter {
   }
 
   public toggleShortcuts(value: boolean) {
-    ipcRenderer.send(AppIpcEvents.TOGGLE_SHORTCUTS, value);
+    ipcRenderer.send(appIpcEvents.TOGGLE_SHORTCUTS, value);
   }
 
   public updateSharedSettings(value: Partial<StoreSettings>) {
-    ipcRenderer.send(AppIpcEvents.UPDATE_SHARED_SETTINGS, value);
+    ipcRenderer.send(appIpcEvents.UPDATE_SHARED_SETTINGS, value);
   }
 
   public destroy() {
-    ipcRenderer.removeListener(AppIpcEvents.TOGGLE_SHORTCUTS, this.toggleShortcutsHandler);
+    ipcRenderer.removeListener(appIpcEvents.TOGGLE_SHORTCUTS, this.toggleShortcutsHandler);
     this.toggleShortcutsHandler = null;
   }
 }
+
+export { AppIpcRenderer };

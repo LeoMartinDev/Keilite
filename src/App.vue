@@ -23,39 +23,50 @@
 import Vue from 'vue';
 import KeiliteNavBar from '@/components/app/NavBar.vue';
 import KeiliteMainNavigationDrawer from '@/components/app/MainNavigationDrawer.vue';
-import { ShortcutsEmitterSingleton } from '@/services/shortcuts-emitter-singleton';
-import { DofusWindowEmitterSingleton } from '@/services/dofus-window-emitter-singleton';
 import { mapGetters, mapActions, Dictionary } from 'vuex';
-import { RawProcess } from '@/background/native-process';
 import { throttle } from 'lodash';
-import { AppSettings, SHORTCUTS_SEPARATOR, EAppShortcuts } from './store/app/types';
+import {
+  AppSettings,
+  SHORTCUTS_SEPARATOR,
+  EAppShortcuts,
+} from './store/app/types';
+import {
+  dofusWindowEmitter,
+  DofusWindowEmitter,
+} from '@/services/dofus-window-emitter';
+import { shortcutsEmitter } from '@/services/shortcuts-emitter';
+import { appIpcEmitter } from '@/services/app-ipc-emitter';
+import { ShortcutsEmitter } from './shared/shortcuts/renderer';
+import { RawProcess } from './store/processes/types';
+import { AppIpcRenderer } from './shared/app-ipc/renderer';
 
 interface Data {
+  dofusWindowEmitter: DofusWindowEmitter;
+  shortcutsEmitter: ShortcutsEmitter;
+  appIpcEmitter: AppIpcRenderer;
   onShortcutHandler: any;
 }
 
 export default Vue.extend({
   name: 'app',
   components: { KeiliteNavBar, KeiliteMainNavigationDrawer },
-  beforeMount() {
-    ShortcutsEmitterSingleton.getInstance();
-    DofusWindowEmitterSingleton.getInstance();
-  },
+  data: (): Data => ({
+    dofusWindowEmitter,
+    shortcutsEmitter,
+    appIpcEmitter,
+    onShortcutHandler: null,
+  }),
   mounted() {
-    DofusWindowEmitterSingleton.instance.on('connected', this.onDofusConnected);
-    DofusWindowEmitterSingleton.instance.on(
-      'disconnected',
-      this.onDofusDisconnected,
-    );
+    this.dofusWindowEmitter.on('connected', this.onDofusConnected);
+    this.appIpcEmitter.on('toggle-shortcuts', this.toggleShortcuts);
+    this.dofusWindowEmitter.on('disconnected', this.onDofusDisconnected);
     this.toggleShortcuts(this.shortcutsEnabled);
   },
   beforeDestroy() {
-    ShortcutsEmitterSingleton.destroy();
-    DofusWindowEmitterSingleton.destroy();
+    this.dofusWindowEmitter.destroy();
+    this.shortcutsEmitter.destroy();
+    this.appIpcEmitter.destroy();
   },
-  data: (): Data => ({
-    onShortcutHandler: null,
-  }),
   methods: {
     focusNextCharacter(): Promise<void> {
       return this.$store.dispatch('characters/focusNextCharacter');
@@ -75,11 +86,11 @@ export default Vue.extend({
     async onShortcut(shortcut: string) {
       const shortcutName = this.shortcutsMap[shortcut];
 
-      if (shortcutName === EAppShortcuts.FOCUS_NEXT_CHARACTER) {
+      if (shortcutName === (EAppShortcuts.FOCUS_NEXT_CHARACTER as string)) {
         await this.focusNextCharacter();
-      } else if (shortcutName === EAppShortcuts.FOCUS_NEXT_CHARACTER) {
+      }
+      if (shortcutName === (EAppShortcuts.FOCUS_NEXT_CHARACTER as string)) {
         await this.focusPreviousCharacter();
-      } else {
       }
     },
     onDofusConnected(rawProcess: RawProcess) {
@@ -94,12 +105,9 @@ export default Vue.extend({
       handler(value: boolean) {
         if (value) {
           this.onShortcutHandler = throttle(this.onShortcut.bind(this), 100);
-          ShortcutsEmitterSingleton.instance.on(
-            'shortcut',
-            this.onShortcutHandler,
-          );
+          this.shortcutsEmitter.on('shortcut', this.onShortcutHandler);
         } else if (this.onShortcutHandler) {
-          ShortcutsEmitterSingleton.instance.removeListener(
+          this.shortcutsEmitter.removeListener(
             'shortcut',
             this.onShortcutHandler,
           );
@@ -119,9 +127,8 @@ export default Vue.extend({
     shortcutsMap: {
       get(): Dictionary<EAppShortcuts> {
         return Object.entries(this.settings.shortcuts).reduce(
-          (accumulator: Dictionary<string>, value: any[]) => {
-            console.log('value :: ', value);
-            accumulator[value[1].join(SHORTCUTS_SEPARATOR)] = value[0];
+          (accumulator: Dictionary<string>, [key, value]: any[]) => {
+            accumulator[value.join(SHORTCUTS_SEPARATOR)] = key;
 
             return accumulator;
           },

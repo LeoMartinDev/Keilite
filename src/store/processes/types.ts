@@ -1,5 +1,3 @@
-import { RawProcess } from '@/shared/native-process';
-
 export type ObjectKey = string | number;
 
 export interface Dictionary<T> {
@@ -9,6 +7,11 @@ export interface Dictionary<T> {
 export enum ProcessState {
   CONNECTED,
   DISCONNECTED,
+}
+
+export interface RawProcess {
+  pid: number;
+  windowTitle: string;
 }
 
 export interface Process extends RawProcess {

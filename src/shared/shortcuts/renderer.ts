@@ -4,7 +4,6 @@ import { shortcutsEvents } from './types';
 
 declare interface ShortcutsEmitter {
   on(event: 'shortcut', listener: (shortcut: string) => void): this;
-  removeListener(event: 'shortcut', listener: () => void): this;
 }
 
 class ShortcutsEmitter extends EventEmitter {

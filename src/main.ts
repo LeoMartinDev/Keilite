@@ -6,6 +6,9 @@ import VeeValidate from 'vee-validate';
 import App from './App.vue';
 import router from './router';
 import store from './store';
+import log from 'electron-log';
+
+log.info(`Saving logs at path "${log.transports.file.findLogPath()}"!`);
 
 Vue.config.productionTip = false;
 

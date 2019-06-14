@@ -54,6 +54,7 @@ const getInitialState = (): AppState => {
       };
     }
     const electronStoreSettings: StoreSettings = electronStore.get('settings') as StoreSettings;
+    console.log('electronStoresettings :: ', electronStoreSettings);
     if (electronStoreSettings) {
       initialState = {
         ...initialState,

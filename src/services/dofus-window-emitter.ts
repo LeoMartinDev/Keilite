@@ -1,8 +1,8 @@
 import { getProcessesByName, getProcessWindowTitle } from 'native-process';
 import { DOFUS_PROCESS_NAME } from '@/constants';
 import { EventEmitter } from 'events';
-import { RawProcess } from '@/shared/native-process';
 import log from 'electron-log';
+import { RawProcess } from '@/store/processes/types';
 
 export function isConnected(windowTitle: string): boolean {
   return windowTitle !== '' && windowTitle.includes(' - ');
@@ -65,7 +65,6 @@ class DofusWindowEmitter extends EventEmitter {
         this._previousPids = pids;
         for (const pid of pids) {
           const windowTitle = await getProcessWindowTitle(pid);
-
           const rawProcess: RawProcess = { windowTitle, pid };
 
           if (isConnected(rawProcess.windowTitle)) {
@@ -84,4 +83,6 @@ class DofusWindowEmitter extends EventEmitter {
   }
 }
 
-export { DofusWindowEmitter };
+const dofusWindowEmitter = new DofusWindowEmitter();
+
+export { dofusWindowEmitter, DofusWindowEmitter };

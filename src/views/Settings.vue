@@ -44,7 +44,7 @@ import {
   SHORTCUTS_SEPARATOR,
   AppSettingsStorage,
 } from '../store/app/types';
-import { StoreSettings } from '../background/defaults';
+import { StoreSettings } from '@/shared/defaults';
 
 const shortcutsGetters = (selected: EAppShortcuts[]): Dictionary<any> => selected.reduce(
   (
@@ -68,12 +68,17 @@ const shortcutsGetters = (selected: EAppShortcuts[]): Dictionary<any> => selecte
         }
         const otherShortcutsNames = without(shortcutsNames, name);
         const flatOtherShortcuts = otherShortcutsNames.reduce(
-          (accumulator: string[], otherShortcutName: string) => {
-            if (!this[otherShortcutName] || !isArray(this[otherShortcutName])) { return accumulator; }
-            accumulator.push(
+          (shortcutsAccumulator: string[], otherShortcutName: string) => {
+            if (
+              !this[otherShortcutName]
+                || !isArray(this[otherShortcutName])
+            ) {
+              return shortcutsAccumulator;
+            }
+            shortcutsAccumulator.push(
               this[otherShortcutName].join(SHORTCUTS_SEPARATOR),
             );
-            return accumulator;
+            return shortcutsAccumulator;
           },
             [] as string[],
         );
