@@ -76,7 +76,7 @@ class DofusWindowEmitter extends EventEmitter {
         }
         this._restart();
       } catch (error) {
-        log.warn('DofusWindowHandler :: loop :: Error : ', error);
+        log.warn('DofusWindowHandler :: loop :: error: ', error);
         this._restart();
       }
     }, 500);

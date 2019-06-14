@@ -5,9 +5,11 @@ import { RootState } from '../types';
 import { ActionTree } from 'vuex';
 import { windowTitleToCharacterName } from './helpers';
 import { setProcessToForeground } from 'native-process';
+import log from 'electron-log';
 
 export const actions: ActionTree<CharactersState, RootState> = {
   async focusNextCharacter({ getters, dispatch }) {
+    log.debug('focusNextCharacter called');
     let nextCharacterIndex = 0;
 
     if (getters.focusableCharactersList.length > 1) {
@@ -24,6 +26,7 @@ export const actions: ActionTree<CharactersState, RootState> = {
     dispatch('focusCharacter', nextCharacterIndex);
   },
   async focusPreviousCharacter({ getters, dispatch }) {
+    log.debug('focusPreviousCharacter called');
     let previousCharacterIndex = 0;
 
     if (getters.focusableCharactersList.length > 1) {
@@ -48,7 +51,9 @@ export const actions: ActionTree<CharactersState, RootState> = {
         await setProcessToForeground(character.pid);
 
         commit(UPDATE_FOCUSED_CHARACTER_INDEX, index);
-      } catch (error) { }
+      } catch (error) { 
+        log.error('characters/focusCharacter error :', error);
+      }
     }
   },
   addCharacter({ dispatch, commit }, character: Character) {

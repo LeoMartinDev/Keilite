@@ -70,11 +70,9 @@ export default Vue.extend({
   },
   methods: {
     focusNextCharacter(): Promise<void> {
-      log.debug('focusNextCharacter called');
       return this.$store.dispatch('characters/focusNextCharacter');
     },
     focusPreviousCharacter(): Promise<void> {
-      log.debug('focusNextCharacter called');
       return this.$store.dispatch('characters/focusPreviousCharacter');
     },
     addProcess(process: RawProcess): Promise<void> {
