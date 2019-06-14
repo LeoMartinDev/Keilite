@@ -7,8 +7,8 @@
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
-    "test:unit": "vue-cli-service test:unit",
-    "release": "vue-cli-service electron:build -p onTagOrDraft"
+    "test:unit": "vue-cli-service test:unit"
+  },
   "dependencies": {
     "@types/lodash": "^4.14.134",
     "async": "^3.0.1",
