@@ -25,6 +25,7 @@ import KeiliteNavBar from '@/components/app/NavBar.vue';
 import KeiliteMainNavigationDrawer from '@/components/app/MainNavigationDrawer.vue';
 import { mapGetters, mapActions, Dictionary } from 'vuex';
 import { throttle } from 'lodash';
+import log from 'electron-log';
 import {
   AppSettings,
   SHORTCUTS_SEPARATOR,
@@ -69,9 +70,11 @@ export default Vue.extend({
   },
   methods: {
     focusNextCharacter(): Promise<void> {
+      log.debug('focusNextCharacter called');
       return this.$store.dispatch('characters/focusNextCharacter');
     },
     focusPreviousCharacter(): Promise<void> {
+      log.debug('focusNextCharacter called');
       return this.$store.dispatch('characters/focusPreviousCharacter');
     },
     addProcess(process: RawProcess): Promise<void> {
