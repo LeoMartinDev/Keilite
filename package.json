@@ -9,7 +9,7 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "test:unit": "vue-cli-service test:unit",
-    "release": "npm run electron:build -p onTagOrDraft --win"
+    "release": "vue-cli-service electron:build -p onTagOrDraft"
   },
   "dependencies": {
     "@types/lodash": "^4.14.134",
