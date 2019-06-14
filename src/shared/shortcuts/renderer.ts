@@ -66,7 +66,6 @@ class ShortcutsEmitter extends EventEmitter {
   }
 
   private _onShortcutPressed(event: Electron.Event, shortcut: string) {
-    console.log('_onShortcutPressed')
     this.emit('shortcut', shortcut);
   }
 }

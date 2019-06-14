@@ -18,10 +18,11 @@ const getInitialState = (): CharactersState => {
 
     if (!currentStorageValue) {
       localStorage.setItem(CHARACTERS_STORAGE_NAME, JSON.stringify(initialStorage));
-      Vue.$log.info(`Initialized ${CHARACTERS_STORAGE_NAME} storage succesfully!`);
+      Vue.$log.info(`Initialized ${CHARACTERS_STORAGE_NAME} storage from defaults succesfully!`);
     } else {
       const value: CharactersState = merge(initialState, JSON.parse(currentStorageValue));
 
+      Vue.$log.info(`Initialized ${CHARACTERS_STORAGE_NAME} storage from localStorage succesfully!`);
       initialState = value;
     }
   } catch (error) {

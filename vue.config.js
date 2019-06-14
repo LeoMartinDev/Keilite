@@ -6,6 +6,9 @@ module.exports = {
     electronBuilder: {
       externals: ['native-process'],
       nodeModulesPath: ['./node_modules'],
+      win: {
+        icon: './public/favicon.ico',
+      },
     },
   },
 };

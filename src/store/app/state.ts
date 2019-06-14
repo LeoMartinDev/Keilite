@@ -1,7 +1,6 @@
 import { AppState, AppStorage } from './types';
 import { APP_STORAGE_NAME } from './constants';
 import Vue from 'vue';
-import { omit } from 'lodash';
 import ElectronStore from 'electron-store';
 import { StoreSettings } from '@/shared/defaults';
 
@@ -44,17 +43,18 @@ const getInitialState = (): AppState => {
 
     if (!currentStorageValue) {
       localStorage.setItem(APP_STORAGE_NAME, JSON.stringify(stateToStorage(initialState)));
-      Vue.$log.info(`Initialized ${APP_STORAGE_NAME} storage succesfully!`);
+      Vue.$log.info(`Initialized ${APP_STORAGE_NAME} storage from defaults succesfully!`);
     } else {
       const value: AppStorage = JSON.parse(currentStorageValue);
 
+      Vue.$log.info(`Initialized ${APP_STORAGE_NAME} storage from localStorage succesfully!`);
       initialState = {
         ...initialState,
         ...stateFromStorage(value)
       };
     }
     const electronStoreSettings: StoreSettings = electronStore.get('settings') as StoreSettings;
-    console.log('electronStoresettings :: ', electronStoreSettings);
+
     if (electronStoreSettings) {
       initialState = {
         ...initialState,

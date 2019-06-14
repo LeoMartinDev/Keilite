@@ -33,6 +33,7 @@ export class AppIpcMain {
   }
 
   [appIpcEvents.TOGGLE_SHORTCUTS](event: Electron.Event, payload: boolean) {
+    log.info(`${appIpcEvents.UPDATE_SHARED_SETTINGS}`, payload);
     const item = this.menu.items.find((item: any) => item.id === 'shortcutsEnabled');
 
     if (item) {
