@@ -4,7 +4,7 @@ import {
   createProtocol,
   installVueDevtools,
 } from 'vue-cli-plugin-electron-builder/lib';
-import {ShortcutsMain} from './shared/shortcuts/main';
+import { ShortcutsMain } from './shared/shortcuts/main';
 import './background/logger';
 import log from 'electron-log';
 import windowStateKeeper from 'electron-window-state';
@@ -25,6 +25,19 @@ let settings: StoreSettings;
 let shortcutsMain: ShortcutsMain;
 let appIpcMain: AppIpcMain;
 let windowState: any;
+
+// lock the app to one instance only
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (win) {
+      win.show();
+    }
+  });
+}
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: true, supportFetchAPI: true, secure: true } }]);
 
@@ -87,9 +100,9 @@ function createWindow() {
   });
   windowState.manage(win);
   createTray();
-/*   if (!isDevelopment) {
-    win.setMenu(null);
-  } */
+  /*   if (!isDevelopment) {
+      win.setMenu(null);
+    } */
   shortcutsMain = new ShortcutsMain();
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
