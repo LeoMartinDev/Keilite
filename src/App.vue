@@ -2,14 +2,11 @@
   <v-app class="keilite__app">
     <keilite-nav-bar></keilite-nav-bar>
     <keilite-main-navigation-drawer></keilite-main-navigation-drawer>
-    <v-content style="flex: 1 1 auto;">
+    <v-content style="flex: 1 1 auto;" app>
       <v-container
         fluid
-        fill-height
-        class="keilite__scroll-container"
       >
         <v-layout
-          fill-height
           align-start
         >
           <router-view />
