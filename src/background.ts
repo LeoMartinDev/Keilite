@@ -12,8 +12,8 @@ import { join } from 'path';
 import Store from 'electron-store';
 import { DEFAULT_STORE_SETTINGS, StoreSettings } from './shared/defaults';
 
-const store = new Store();
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const store = new Store();
 let isQuiting = false;
 
 const WINDOW_HEIGHT = 550;
@@ -21,6 +21,7 @@ const WINDOW_WIDTH = 400;
 
 let win: Electron.BrowserWindow | null;
 let tray: Electron.Tray | null;
+let trayContextMenu: Electron.Menu | null;
 let settings: StoreSettings;
 let shortcutsMain: ShortcutsMain;
 let appIpcMain: AppIpcMain;
@@ -45,7 +46,7 @@ protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: t
 
 function createTray() {
   tray = new Tray(join(__static, 'favicon.ico'));
-  const trayContextMenu = Menu.buildFromTemplate([
+  trayContextMenu = Menu.buildFromTemplate([
     {
       label: 'Activer les raccourcis',
       type: 'checkbox',
@@ -74,7 +75,6 @@ function createTray() {
     }
   });
   tray.setContextMenu(trayContextMenu);
-  appIpcMain = new AppIpcMain(win as BrowserWindow, tray, trayContextMenu);
 }
 
 function createWindow() {
@@ -101,10 +101,35 @@ function createWindow() {
     icon: join(__static, 'favicon.ico'),
   });
   windowState.manage(win);
-  createTray();
-  /*   if (!isDevelopment) {
-      win.setMenu(null);
-    } */
+  if (settings.minimizeToTray) {
+    createTray();
+  }
+  appIpcMain = new AppIpcMain(win as BrowserWindow);
+  appIpcMain.on('toggle-shortcuts', value => {
+    if (!tray || !trayContextMenu) return;
+    const item = trayContextMenu.items.find((item: any) => item.id === 'shortcutsEnabled');
+
+    if (item) {
+      item.checked = value;
+      tray.setContextMenu(trayContextMenu);
+    }
+  });
+  appIpcMain.on('minimize-to-tray', value => {
+    settings.minimizeToTray = value;
+    if (!value) {
+      if (tray) {
+        tray.destroy();
+        tray = null;
+      }
+    } else {
+      if (!tray) {
+        createTray();
+      }
+    }
+  });
+  if (!isDevelopment) {
+    win.setMenu(null);
+  }
   shortcutsMain = new ShortcutsMain();
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
@@ -119,10 +144,12 @@ function createWindow() {
     }
   });
   win.on('close', (event: Electron.Event) => {
-    if (!isQuiting) {
-      event.preventDefault();
-      if (win) {
-        win.hide();
+    if (settings.minimizeToTray) {
+      if (!isQuiting) {
+        event.preventDefault();
+        if (win) {
+          win.hide();
+        }
       }
     }
     return false;

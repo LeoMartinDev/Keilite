@@ -1,20 +1,26 @@
+import { AppIpcMain } from './main';
 import { Dictionary } from '../../store/processes/types';
 import { StoreSettings } from '../defaults';
 import Store from 'electron-store';
 import { ipcMain } from 'electron';
 import { appIpcEvents } from './types';
 import log from 'electron-log';
+import { EventEmitter } from 'events';
 
 const store = new Store();
 
-export class AppIpcMain {
+declare interface AppIpcMain {
+  on(event: 'minimize-to-tray', listener: (value: boolean) => void): this;
+  on(event: 'toggle-shortcuts', listener: (value: boolean) => void): this;
+}
+
+class AppIpcMain extends EventEmitter {
   private handlers: Dictionary<any> = {};
 
   constructor(
     private win: Electron.BrowserWindow,
-    private tray: Electron.Tray,
-    private menu: Electron.Menu,
   ) {
+    super();
     Object.values(appIpcEvents).forEach((eventName: string) => {
       // @ts-ignore
       this.handlers[eventName] = this[eventName].bind(this);
@@ -33,13 +39,13 @@ export class AppIpcMain {
   }
 
   [appIpcEvents.TOGGLE_SHORTCUTS](event: Electron.Event, payload: boolean) {
-    log.info(`${appIpcEvents.UPDATE_SHARED_SETTINGS}`, payload);
-    const item = this.menu.items.find((item: any) => item.id === 'shortcutsEnabled');
+    log.info(`${appIpcEvents.TOGGLE_SHORTCUTS}`, payload);
+    this.emit('toggle-shortcuts', payload);
+  }
 
-    if (item) {
-      item.checked = payload;
-      this.tray.setContextMenu(this.menu);
-    }
+  [appIpcEvents.MINIMIZE_TO_TRAY](event: Electron.Event, payload: boolean) {
+    log.info(`${appIpcEvents.MINIMIZE_TO_TRAY}`, payload);
+    this.emit('minimize-to-tray', payload);
   }
 
   toggleShortcuts(value: boolean) {
@@ -53,3 +59,5 @@ export class AppIpcMain {
     });
   }
 }
+
+export { AppIpcMain };

@@ -23,6 +23,10 @@ class AppIpcRenderer extends EventEmitter {
     ipcRenderer.send(appIpcEvents.TOGGLE_SHORTCUTS, value);
   }
 
+  public minimizeToTray(value: boolean) {
+    ipcRenderer.send(appIpcEvents.MINIMIZE_TO_TRAY, value);    
+  }
+
   public updateSharedSettings(value: Partial<StoreSettings>) {
     ipcRenderer.send(appIpcEvents.UPDATE_SHARED_SETTINGS, value);
   }

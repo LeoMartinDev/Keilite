@@ -35,6 +35,7 @@ const getInitialState = (): AppState => {
     },
     sharedSettings: {
       enableShortcutsOnStart: false,
+      minimizeToTray: false,
     },
     shortcutsEnabled: false,
   };
@@ -58,7 +59,7 @@ const getInitialState = (): AppState => {
     if (electronStoreSettings) {
       initialState = {
         ...initialState,
-        ...electronStoreSettings,
+        sharedSettings: electronStoreSettings,
       };
     }
     initialState = handleSettings(initialState);
