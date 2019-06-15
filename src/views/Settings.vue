@@ -6,6 +6,10 @@
         label="Activer les raccourcis au démarrage de l'application"
         v-model="toggleShortcutsOnStart"
       ></v-switch>
+      <v-switch
+        label="Réduire dans le tray à la fermeture"
+        v-model="minimizeToTray"
+      ></v-switch>
       <v-subheader>Raccourcis clavier</v-subheader>
       <shortcut-field
         label="Personnage précédent"
@@ -45,6 +49,7 @@ import {
   AppSettingsStorage,
 } from '../store/app/types';
 import { StoreSettings } from '@/shared/defaults';
+import { appIpcEmitter } from '../services/app-ipc-emitter';
 
 const shortcutsGetters = (selected: EAppShortcuts[]): Dictionary<any> => selected.reduce(
   (
@@ -138,6 +143,15 @@ export default Vue.extend({
       },
       set(value: boolean) {
         this.updateSharedSettings({ enableShortcutsOnStart: value });
+      },
+    },
+    minimizeToTray: {
+      get(): boolean {
+        return this.sharedSettings.minimizeToTray;
+      },
+      set(value: boolean) {
+        this.updateSharedSettings({ minimizeToTray: value });
+        appIpcEmitter.minimizeToTray(value);
       },
     },
   },
