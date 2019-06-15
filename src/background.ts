@@ -26,17 +26,19 @@ let shortcutsMain: ShortcutsMain;
 let appIpcMain: AppIpcMain;
 let windowState: any;
 
-// lock the app to one instance only
-const gotTheLock = app.requestSingleInstanceLock();
+if (!isDevelopment) {
+  // lock the app to one instance only
+  const gotTheLock = app.requestSingleInstanceLock();
 
-if (!gotTheLock) {
-  app.quit();
-} else {
-  app.on('second-instance', (event, commandLine, workingDirectory) => {
-    if (win) {
-      win.show();
-    }
-  });
+  if (!gotTheLock) {
+    app.quit();
+  } else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+      if (win) {
+        win.show();
+      }
+    });
+  }
 }
 
 protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { standard: true, supportFetchAPI: true, secure: true } }]);
