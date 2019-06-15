@@ -1,4 +1,3 @@
-import { AppIpcMain } from './main';
 import { Dictionary } from '../../store/processes/types';
 import { StoreSettings } from '../defaults';
 import Store from 'electron-store';

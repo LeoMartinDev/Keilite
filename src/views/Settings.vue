@@ -30,7 +30,7 @@
         ref="focusNextCharacter"
       ></shortcut-field>
       <v-subheader>Avancé</v-subheader>
-      <v-btn>Ouvrir le fichier de logs</v-btn>
+      <v-btn @click="openLogsFile()">Ouvrir le fichier de logs</v-btn>
     </v-container>
   </v-card>
 </template>
@@ -42,6 +42,8 @@ import ShortcutField from '@/components/shared/ShortcutField.vue';
 import {
   clone, without, has, isArray,
 } from 'lodash';
+// eslint-disable-next-line
+import { remote } from 'electron';
 import {
   AppSettings,
   EAppShortcuts,
@@ -50,6 +52,8 @@ import {
 } from '../store/app/types';
 import { StoreSettings } from '@/shared/defaults';
 import { appIpcEmitter } from '../services/app-ipc-emitter';
+
+const { shell } = remote;
 
 const shortcutsGetters = (selected: EAppShortcuts[]): Dictionary<any> => selected.reduce(
   (
@@ -165,6 +169,15 @@ export default Vue.extend({
         this.$store.getters['app/shortcutsEnabled'],
       );
       this.$store.dispatch('app/toggleShortcuts', false);
+    },
+    openLogsFile() {
+      try {
+        const logsPath = this.$log.transports.file.findLogPath();
+
+        shell.openExternal(logsPath);
+      } catch (error) {
+        this.$log.error('Open logs file failed:', error);
+      }
     },
   },
 });
