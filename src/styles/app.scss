@@ -4,6 +4,22 @@ html {
   overflow: initial !important;
 }
 
+::-webkit-scrollbar {
+  padding-right: 2px;
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #bbb7b7;
+  border-radius: 6px;
+}
+
+.v-content__wrap {
+  height: 100% !important;
+  overflow-y: auto !important;
+  backface-visibility: hidden !important;
+}
+
 .keilite__app {
   height: 100vh!important;
   overflow: hidden!important;
