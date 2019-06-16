@@ -4,6 +4,7 @@ import { Module, MutationTree, ActionTree, GetterTree } from 'vuex';
 import { RootState } from './types';
 import { ProgressInfo } from '@/shared/updater/types';
 import { UpdateInfo } from 'electron-updater';
+import compareVersions from 'compare-versions';
 // eslint-disable-next-line
 import { remote } from 'electron';
 const { app } = remote;
@@ -44,12 +45,13 @@ const actions: ActionTree<UpdatesState, RootState> = {
     
     try {
       const updateInfo = await updaterEmitter.lookForUpdates();
-
-      if (!updateInfo || updateInfo.version === app.getVersion()) {
+      
+      Vue.$log.info('Update info:', updateInfo);
+      if (!updateInfo || compareVersions(app.getVersion(), updateInfo.version) > -1) {
         commit(UPDATE_STATUS, 'Le programme est à jour !');
       } else {
         commit(UPDATE_FOUND_UPDATE, updateInfo);
-        commit(UPDATE_STATUS, `Téléchargement de la mise à jour.`);
+        commit(UPDATE_STATUS, `Téléchargement de la mise à jour...`);
         dispatch('downloadUpdate');
       }
     } catch (error) {
@@ -72,6 +74,7 @@ const actions: ActionTree<UpdatesState, RootState> = {
       commit(TOGGLE_IS_READY_TO_INSTALL, true);
     } catch (error) {
       commit(UPDATE_FOUND_UPDATE, undefined);
+      commit(UPDATE_DOWNLOAD_PROGRESS, null);
       commit(UPDATE_STATUS, 'Impossible de télécharger la mise à jour !');
     }
   }

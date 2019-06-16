@@ -1,7 +1,8 @@
 {
   "name": "keilite",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "displayName": "Keilite",
+  "author": "Léo MARTIN",
   "scripts": {
     "lint": "vue-cli-service lint",
     "electron:build": "vue-cli-service electron:build",
@@ -15,6 +16,7 @@
     "@types/lodash": "^4.14.134",
     "async": "^3.0.1",
     "chai-as-promised": "^7.1.1",
+    "compare-versions": "^3.4.0",
     "core-js": "^2.6.5",
     "electron-log": "^3.0.6",
     "electron-store": "^3.3.0",
