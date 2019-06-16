@@ -1,6 +1,6 @@
 {
   "name": "keilite",
-  "version": "0.1.2",
+  "version": "0.1.1",
   "displayName": "Keilite",
   "scripts": {
     "lint": "vue-cli-service lint",

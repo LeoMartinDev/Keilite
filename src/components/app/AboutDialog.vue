@@ -21,7 +21,7 @@
           <v-img :src="logo"></v-img>
           <h1 class="text-capitalize">{{ appName }}</h1>
           <span>Version {{ appVersion }}</span>
-          <span v-if="hasLookedForUpdates">
+          <span v-if="hasLookedForUpdates" class="text-center">
             {{ status }}
           </span>
           <v-btn
@@ -36,12 +36,11 @@
           <v-btn
             v-else-if="hasLookedForUpdates && foundUpdate && !isReadyToInstall"
             :disabled="true"
-            :loading="!!downloadProgress"
             class="white--text"
             small
             color="teal lighten-2"
           >
-          Téléchargement ({{ downloadProgress.percent }}%)
+          Téléchargement ({{ progressPercent }}%)
           </v-btn>
           <v-btn
             v-else
@@ -64,6 +63,7 @@ import { updaterEmitter } from '@/services/updater-emitter';
 // eslint-disable-next-line
 import { remote } from "electron";
 import { UpdateInfo } from 'electron-updater';
+import { ProgressInfo } from '../../shared/updater/types';
 
 const { app } = remote;
 
@@ -100,6 +100,12 @@ export default Vue.extend({
     },
     isReadyToInstall(): boolean {
       return this.$store.getters['updates/isReadyToInstall'];
+    },
+    downloadProgress(): ProgressInfo {
+      return this.$store.getters['updates/downloadProgress'];
+    },
+    progressPercent(): number {
+      return this.downloadProgress ? Math.round(this.downloadProgress.percent) : 0;
     },
   },
   methods: {
