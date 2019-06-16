@@ -42,6 +42,12 @@
             </v-list-tile-action>
             <v-list-tile-title>Paramètres</v-list-tile-title>
           </v-list-tile>
+          <v-list-tile @click="showAboutDialog()">
+            <v-list-tile-action>
+              <v-icon>info</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-title>A propos</v-list-tile-title>
+          </v-list-tile>
         </v-list>
       </v-flex>
       <v-flex
@@ -63,6 +69,15 @@ import { mapGetters, mapActions } from 'vuex';
 export default Vue.extend({
   computed: {
     ...mapGetters('UI', ['navigationDrawer']),
+  },
+  methods: {
+    toggleNavigationDrawer(value?: boolean) {
+      this.$store.dispatch('UI/toggleNavigationDrawer', value);
+    },
+    showAboutDialog() {
+      this.toggleNavigationDrawer(false);
+      this.$store.dispatch('UI/toggleAboutDialog', true);
+    },
   },
 });
 </script>

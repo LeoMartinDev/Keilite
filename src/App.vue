@@ -2,6 +2,7 @@
   <v-app class="keilite__app">
     <keilite-nav-bar></keilite-nav-bar>
     <keilite-main-navigation-drawer></keilite-main-navigation-drawer>
+    <keilite-about-dialog></keilite-about-dialog>
     <v-content style="flex: 1 1 auto;" app>
       <v-container
         fluid
@@ -20,6 +21,7 @@
 import Vue from 'vue';
 import KeiliteNavBar from '@/components/app/NavBar.vue';
 import KeiliteMainNavigationDrawer from '@/components/app/MainNavigationDrawer.vue';
+import KeiliteAboutDialog from '@/components/app/AboutDialog.vue';
 import { mapGetters, mapActions, Dictionary } from 'vuex';
 import { throttle } from 'lodash';
 import log from 'electron-log';
@@ -35,6 +37,7 @@ import {
 import { shortcutsEmitter } from '@/services/shortcuts-emitter';
 import { appIpcEmitter } from '@/services/app-ipc-emitter';
 import { ShortcutsEmitter } from './shared/shortcuts/renderer';
+import { updaterEmitter } from '@/services/updater-emitter';
 import { RawProcess } from './store/processes/types';
 import { AppIpcRenderer } from './shared/app-ipc/renderer';
 
@@ -47,7 +50,7 @@ interface Data {
 
 export default Vue.extend({
   name: 'app',
-  components: { KeiliteNavBar, KeiliteMainNavigationDrawer },
+  components: { KeiliteNavBar, KeiliteMainNavigationDrawer, KeiliteAboutDialog },
   data: (): Data => ({
     dofusWindowEmitter,
     shortcutsEmitter,

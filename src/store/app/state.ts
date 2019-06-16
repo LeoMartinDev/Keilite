@@ -2,7 +2,7 @@ import { AppState, AppStorage } from './types';
 import { APP_STORAGE_NAME } from './constants';
 import Vue from 'vue';
 import ElectronStore from 'electron-store';
-import { StoreSettings } from '@/shared/defaults';
+import { StoreSettings, DEFAULT_STORE_SETTINGS } from '@/shared/defaults';
 
 const electronStore = new ElectronStore();
 
@@ -33,10 +33,7 @@ const getInitialState = (): AppState => {
         focusPreviousCharacter: ['Control', 'q'],
       },
     },
-    sharedSettings: {
-      enableShortcutsOnStart: false,
-      minimizeToTray: false,
-    },
+    sharedSettings: DEFAULT_STORE_SETTINGS,
     shortcutsEnabled: false,
   };
   try {
