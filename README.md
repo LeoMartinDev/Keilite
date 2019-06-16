@@ -1,34 +1,4 @@
-# keilite_vue_cli_electron
+# Keilite
+> Keilite est un utilitaire pour le jeu Dofus permettant de changer rapidement de compte grace à des raccourcis clavier. Il a donc pour but de remplacer le raccourcis Windows `alt+echap` ou des utilitaires comme Mininit ou Organizer. Le principal avantage à utiliser Keilite au lieu des raccourcis Windows est la possibilité de gérer l'ordre de ses personnages lors du focus (et de pouvoir le modifier facilement).
 
-## Project setup
-```
-yarn install
-```
-
-### Compiles and hot-reloads for development
-```
-yarn run serve
-```
-
-### Compiles and minifies for production
-```
-yarn run build
-```
-
-### Run your tests
-```
-yarn run test
-```
-
-### Lints and fixes files
-```
-yarn run lint
-```
-
-### Run your unit tests
-```
-yarn run test:unit
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## [Télécharger Keilite](https://github.com/LeoMartinDev/Keilite/releases/latest)
