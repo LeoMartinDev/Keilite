@@ -32,7 +32,7 @@ export class ShortcutsMain {
         return event.returnValue = success;
       }
     } catch (error) {
-      log.error(`${shortcutsEvents.REGISTER_SHORTCUT} error !`, error);
+      log.error(`${shortcutsEvents.REGISTER_SHORTCUT} error:`, error);
     }
     return event.returnValue = false;
   }
@@ -44,7 +44,7 @@ export class ShortcutsMain {
 
       return event.returnValue = true;
     } catch (error) {
-      log.error(`${shortcutsEvents.UNREGISTER_SHORTCUT} error !`, error);
+      log.error(`${shortcutsEvents.UNREGISTER_SHORTCUT} error:`, error);
     }
     return event.returnValue = false;
   }

@@ -1,7 +1,7 @@
 <template>
   <v-card class="elevation-1">
     <v-container>
-      <v-subheader>Démarrage</v-subheader>
+      <v-subheader>Application</v-subheader>
       <v-switch
         label="Activer les raccourcis au démarrage de l'application"
         v-model="toggleShortcutsOnStart"
@@ -9,6 +9,10 @@
       <v-switch
         label="Réduire dans le tray à la fermeture"
         v-model="minimizeToTray"
+      ></v-switch>
+      <v-switch
+        label="Rechercher des mises à jour au démarrage de l'application"
+        v-model="checkForUpdatesOnStart"
       ></v-switch>
       <v-subheader>Raccourcis clavier</v-subheader>
       <shortcut-field
@@ -147,6 +151,14 @@ export default Vue.extend({
       },
       set(value: boolean) {
         this.updateSharedSettings({ enableShortcutsOnStart: value });
+      },
+    },
+    checkForUpdatesOnStart: {
+      get(): boolean {
+        return this.sharedSettings.checkForUpdatesOnStart;
+      },
+      set(value: boolean) {
+        this.updateSharedSettings({ checkForUpdatesOnStart: value });
       },
     },
     minimizeToTray: {

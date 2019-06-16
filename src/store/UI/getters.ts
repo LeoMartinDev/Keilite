@@ -4,4 +4,5 @@ import { RootState } from '../types';
 
 export const getters: GetterTree<UIState, RootState> = {
   navigationDrawer: (state): boolean => state.navigationDrawer,
+  aboutDialog: (state): boolean => state.aboutDialog,
 };

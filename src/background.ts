@@ -1,3 +1,4 @@
+import { UpdaterMain } from './shared/updater/main';
 import { AppIpcMain } from './shared/app-ipc/main';
 import { app, protocol, BrowserWindow, Tray, Menu, MenuItem } from 'electron';
 import {
@@ -25,6 +26,7 @@ let trayContextMenu: Electron.Menu | null;
 let settings: StoreSettings;
 let shortcutsMain: ShortcutsMain;
 let appIpcMain: AppIpcMain;
+let updaterMain: UpdaterMain;
 let windowState: any;
 
 if (!isDevelopment) {
@@ -78,6 +80,7 @@ function createTray() {
 }
 
 function createWindow() {
+  updaterMain = new UpdaterMain();
   windowState = windowStateKeeper({
     fullScreen: false,
     maximize: false,
