@@ -4,6 +4,7 @@ import { Module, MutationTree, ActionTree, GetterTree } from 'vuex';
 import { RootState } from './types';
 import { ProgressInfo } from '@/shared/updater/types';
 import { UpdateInfo } from 'electron-updater';
+import compareVersions from 'compare-versions';
 // eslint-disable-next-line
 import { remote } from 'electron';
 const { app } = remote;
@@ -11,9 +12,9 @@ const { app } = remote;
 export interface UpdatesState {
   hasLookedForUpdates: boolean,
   isLookingForUpdates: boolean,
-  foundUpdate?: UpdateInfo,
-  status?: string,
-  downloadProgress?: ProgressInfo,
+  foundUpdate: UpdateInfo | null,
+  status?: string | null,
+  downloadProgress?: ProgressInfo | null,
   isReadyToInstall: boolean,
 }
 
@@ -32,9 +33,9 @@ const TOGGLE_IS_READY_TO_INSTALL = 'TOGGLE_IS_READY_TO_INSTALL';
 const state: UpdatesState = {
   hasLookedForUpdates: false,
   isLookingForUpdates: false,
-  foundUpdate: undefined,
-  status: undefined,
-  downloadProgress: undefined,
+  foundUpdate: null,
+  status: null,
+  downloadProgress: null,
   isReadyToInstall: false,
 };
 
@@ -44,13 +45,14 @@ const actions: ActionTree<UpdatesState, RootState> = {
     
     try {
       const updateInfo = await updaterEmitter.lookForUpdates();
-
-      if (!updateInfo || updateInfo.version === app.getVersion()) {
+      
+      Vue.$log.info('Update info:', updateInfo);
+      if (!updateInfo || compareVersions(app.getVersion(), updateInfo.version) > -1) {
         commit(UPDATE_STATUS, 'Le programme est à jour !');
       } else {
         commit(UPDATE_FOUND_UPDATE, updateInfo);
+        commit(UPDATE_STATUS, `Téléchargement de la mise à jour...`);
         dispatch('downloadUpdate');
-        commit(UPDATE_STATUS, `Une mise à jour est en cours de téléchargement.`);
       }
     } catch (error) {
         commit(UPDATE_STATUS, 'Impossible de récupérer les mises à jour !');
@@ -63,6 +65,7 @@ const actions: ActionTree<UpdatesState, RootState> = {
       return;
     }
     updaterEmitter.on('download-progress', (progressInfo: ProgressInfo) => {
+      Vue.$log.info('Update download progress: ', progressInfo);
       commit(UPDATE_DOWNLOAD_PROGRESS, progressInfo);
     });
     try {
@@ -70,6 +73,8 @@ const actions: ActionTree<UpdatesState, RootState> = {
       commit(UPDATE_STATUS, 'La mise à jour est prête à être installée !');
       commit(TOGGLE_IS_READY_TO_INSTALL, true);
     } catch (error) {
+      commit(UPDATE_FOUND_UPDATE, undefined);
+      commit(UPDATE_DOWNLOAD_PROGRESS, null);
       commit(UPDATE_STATUS, 'Impossible de télécharger la mise à jour !');
     }
   }
@@ -80,16 +85,16 @@ const mutations: MutationTree<UpdatesState> = {
     state.isLookingForUpdates = value || !state.isLookingForUpdates;
   },
   [UPDATE_STATUS](state: UpdatesState, value?: string) {
-    state.status = value;
+    Vue.set(state, 'status', value);
   },
   [UPDATE_FOUND_UPDATE](state: UpdatesState, value: UpdateInfo) {
-    state.foundUpdate = value;
+    Vue.set(state, 'foundUpdate', value);
   },
   [TOGGLE_HAS_LOOKED_FOR_UPDATES](state: UpdatesState, value?: boolean) {
     state.hasLookedForUpdates = value || !state.hasLookedForUpdates;
   },
   [UPDATE_DOWNLOAD_PROGRESS](state: UpdatesState, value?: ProgressInfo) {
-    state.downloadProgress = value;
+    Vue.set(state, 'downloadProgress', value);
   },
   [TOGGLE_IS_READY_TO_INSTALL](state: UpdatesState, value?: boolean) {
     state.isReadyToInstall = value || !state.isReadyToInstall;
@@ -99,7 +104,7 @@ const mutations: MutationTree<UpdatesState> = {
 const getters: GetterTree<UpdatesState, RootState> = {
   hasLookedForUpdates: state => state.hasLookedForUpdates,
   isLookingForUpdates: state => state.isLookingForUpdates,
-  foundUpdate: (state: UpdatesState): UpdateInfo | undefined => state.foundUpdate,
+  foundUpdate: (state: UpdatesState): UpdateInfo | null => state.foundUpdate,
   status: state => state.status,
   downloadProgress: state => state.downloadProgress,
   isReadyToInstall: state => state.isReadyToInstall,

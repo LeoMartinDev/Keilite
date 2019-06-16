@@ -30,16 +30,15 @@ class UpdaterRenderer extends EventEmitter {
   }
 
   downloadUpdate(): Promise<void> {
-    const onProgressInfoHandler = (progressInfo: ProgressInfo) => {
+    const onProgressInfoHandler = (event: Electron.Event, progressInfo: ProgressInfo) => {
       this.emit('download-progress', progressInfo);
     };
     const onDownloadUpdatePromise: Promise<void> = new Promise((resolve, reject) => {
       ipcRenderer.on(updaterEvents.DOWNLOAD_UPDATE, (event: Electron.Event, payload: AppIpcEventPayload) => {
+        ipcRenderer.removeListener(updaterEvents.PROGRESS_INFO, onProgressInfoHandler);
         if (!payload.success) {
-          ipcRenderer.removeListener(updaterEvents.PROGRESS_INFO, onProgressInfoHandler);
           return reject(payload.error);
         } else {
-          ipcRenderer.removeListener(updaterEvents.PROGRESS_INFO, onProgressInfoHandler);
           return resolve();
         }
       });

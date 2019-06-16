@@ -3,13 +3,12 @@
     <keilite-nav-bar></keilite-nav-bar>
     <keilite-main-navigation-drawer></keilite-main-navigation-drawer>
     <keilite-about-dialog></keilite-about-dialog>
-    <v-content style="flex: 1 1 auto;" app>
-      <v-container
-        fluid
-      >
-        <v-layout
-          align-start
-        >
+    <v-content
+      style="flex: 1 1 auto;"
+      app
+    >
+      <v-container fluid>
+        <v-layout align-start>
           <router-view />
         </v-layout>
       </v-container>
@@ -40,6 +39,7 @@ import { ShortcutsEmitter } from './shared/shortcuts/renderer';
 import { updaterEmitter } from '@/services/updater-emitter';
 import { RawProcess } from './store/processes/types';
 import { AppIpcRenderer } from './shared/app-ipc/renderer';
+import { StoreSettings } from './shared/defaults';
 
 interface Data {
   dofusWindowEmitter: DofusWindowEmitter;
@@ -50,7 +50,11 @@ interface Data {
 
 export default Vue.extend({
   name: 'app',
-  components: { KeiliteNavBar, KeiliteMainNavigationDrawer, KeiliteAboutDialog },
+  components: {
+    KeiliteNavBar,
+    KeiliteMainNavigationDrawer,
+    KeiliteAboutDialog,
+  },
   data: (): Data => ({
     dofusWindowEmitter,
     shortcutsEmitter,
@@ -62,6 +66,9 @@ export default Vue.extend({
     this.appIpcEmitter.on('toggle-shortcuts', this.toggleShortcuts);
     this.dofusWindowEmitter.on('disconnected', this.onDofusDisconnected);
     this.toggleShortcuts(this.shortcutsEnabled);
+    if (this.sharedSettings.checkForUpdatesOnStart) {
+      this.$store.dispatch('updates/lookForUpdates');
+    }
   },
   beforeDestroy() {
     this.dofusWindowEmitter.destroy();
@@ -85,7 +92,6 @@ export default Vue.extend({
       return this.$store.dispatch('app/toggleShortcuts', value);
     },
     async onShortcut(shortcut: string) {
-      console.log('onshortcut :: ', shortcut);
       const shortcutName = this.shortcutsMap[shortcut];
 
       if (shortcutName === (EAppShortcuts.FOCUS_NEXT_CHARACTER as string)) {
@@ -106,7 +112,6 @@ export default Vue.extend({
     shortcutsEnabled: {
       handler(value: boolean) {
         if (value) {
-          console.log('short cut handler true');
           this.onShortcutHandler = throttle(this.onShortcut.bind(this), 100);
           this.shortcutsEmitter.on('shortcut', this.onShortcutHandler);
         } else if (this.onShortcutHandler) {
@@ -126,6 +131,9 @@ export default Vue.extend({
     },
     settings(): AppSettings {
       return this.$store.getters['app/settings'];
+    },
+    sharedSettings(): StoreSettings {
+      return this.$store.getters['app/sharedSettings'];
     },
     shortcutsMap: {
       get(): Dictionary<EAppShortcuts> {

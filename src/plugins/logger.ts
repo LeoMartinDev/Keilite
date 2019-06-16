@@ -10,10 +10,10 @@ const format = '[RENDERER] :: [{y}-{m}-{d} {h}:{i}:{s}.{ms}] [{level}] {text}';
 log.transports.file.format = format;
 log.transports.console.format = format;
 
-if (!isDevelopment) {
+/* if (!isDevelopment) {
   log.transports.console = (() => {}) as unknown as IConsoleTransport;
 }
-
+ */
 class LogPlugin {
   install(Vue: VueConstructor<_Vue>) {
     Vue.$log = log;
