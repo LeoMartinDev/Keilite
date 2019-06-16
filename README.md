@@ -11,8 +11,8 @@
 ### Requirements
 
 - **NodeJS** v10 et supérieur
-- **node-gyp** pour compiler les dépendances natives (voir https://github.com/nodejs/node-gyp pour l'installation, nécessite *python2.7* entre autres).
-- **Atlbase.h** nécessaire pour compiler [native-process](https://github.com/LeoMartinDev/node-native-process) qui permet le focus et la récupération des titres de fenêtres (voir https://stackoverflow.com/a/46304843/5677183 pour l'installation, nécessite Visual Studio).
+- **node-gyp** pour compiler les dépendances natives (voir https://github.com/nodejs/node-gyp pour l'installation, nécessite **python2.7** entre autres).
+- **Atlbase.h** nécessaire pour compiler [native-process](https://github.com/LeoMartinDev/node-native-process) qui permet le focus et la récupération des titres de fenêtres (voir https://stackoverflow.com/a/46304843/5677183 pour l'installation, nécessite **Visual Studio**).
 
 #### Installer les dépendances
 
