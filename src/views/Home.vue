@@ -1,40 +1,39 @@
 <template>
-  <v-flex>
-    <v-card
-      class="elevation-1"
-      v-if="list.length > 0"
-    >
-      <v-list two-line>
-        <v-subheader>
-          Personnages connectés <v-chip
-            color="teal"
-            text-color="white"
-            class="font-weight-bold"
-          >{{ list.length }}</v-chip>
-        </v-subheader>
-        <draggable
-          v-model="list"
-          name="list-complete"
-          :options="options"
-        >
-          <transition-group
-            type="transition"
-            :name="'flip-list'"
+  <v-layout fill-height>
+    <v-flex v-if="list.length > 0">
+      <v-card class="elevation-1">
+        <v-list two-line>
+          <v-subheader>
+            Personnages connectés <v-chip
+              color="teal"
+              text-color="white"
+              class="font-weight-bold"
+            >{{ list.length }}</v-chip>
+          </v-subheader>
+          <draggable
+            v-model="list"
+            name="list-complete"
+            :options="options"
           >
-            <character-list-item
-              v-for="(character, index) of list"
-              :key="character.name"
-              :character="character"
-              @setToForeground="focusCharacter(index)"
-              @toggleFocusable="value => toggleFocusable(character, value)"
-              :line="index < list.length - 1"
-              @edit="editCharacter(character)"
+            <transition-group
+              type="transition"
+              :name="'flip-list'"
             >
-            </character-list-item>
-          </transition-group>
-        </draggable>
-      </v-list>
-    </v-card>
+              <character-list-item
+                v-for="(character, index) of list"
+                :key="character.name"
+                :character="character"
+                @setToForeground="focusCharacter(index)"
+                @toggleFocusable="value => toggleFocusable(character, value)"
+                :line="index < list.length - 1"
+                @edit="editCharacter(character)"
+              >
+              </character-list-item>
+            </transition-group>
+          </draggable>
+        </v-list>
+      </v-card>
+    </v-flex>
     <v-img
       v-else
       :src="chachaImage"
@@ -56,7 +55,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-  </v-flex>
+  </v-layout>
 </template>
 
 <script lang="ts">

@@ -1,3 +1,4 @@
+import './stat-cache';
 import './plugins/logger';
 import '@/styles/app.scss';
 import Vue from 'vue';

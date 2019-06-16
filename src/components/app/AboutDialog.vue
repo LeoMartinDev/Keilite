@@ -21,35 +21,41 @@
           <v-img :src="logo"></v-img>
           <h1 class="text-capitalize">{{ appName }}</h1>
           <span>Version {{ appVersion }}</span>
-          <span v-if="hasLookedForUpdates" class="text-center">
+          <span
+            v-if="hasLookedForUpdates"
+            class="text-center"
+          >
             {{ status }}
           </span>
-          <v-btn
-            v-if="!foundUpdate"
-            small
-            class="white--text"
-            color="teal lighten-2"
-            @click="lookForUpdates()"
-            :disabled="isLookingForUpdates"
-            :loading="isLookingForUpdates"
-          >Rechercher des mises à jour</v-btn>
-          <v-btn
-            v-else-if="hasLookedForUpdates && foundUpdate && !isReadyToInstall"
-            :disabled="true"
-            class="white--text"
-            small
-            color="teal lighten-2"
-          >
-          Téléchargement ({{ progressPercent }}%)
-          </v-btn>
-          <v-btn
-            v-else
-            small
-            class="white--text"
-            color="teal lighten-2"
-            @click="quitAndInstall"
-            :disabled="!foundUpdate"
-          >Mettre à jour <v-icon right>update</v-icon></v-btn>
+          <template v-if="!isDevelopment">
+            <v-btn
+              v-if="!foundUpdate"
+              small
+              class="white--text"
+              color="teal lighten-2"
+              @click="lookForUpdates()"
+              :disabled="isLookingForUpdates"
+              :loading="isLookingForUpdates"
+            >Rechercher des mises à jour</v-btn>
+            <v-btn
+              v-else-if="hasLookedForUpdates && foundUpdate && !isReadyToInstall"
+              :disabled="true"
+              class="white--text"
+              small
+              color="teal lighten-2"
+            >
+              Téléchargement ({{ progressPercent }}%)
+            </v-btn>
+            <v-btn
+              v-else
+              small
+              class="white--text"
+              color="teal lighten-2"
+              @click="quitAndInstall"
+              :disabled="!foundUpdate"
+            >Mettre à jour <v-icon right>update</v-icon>
+            </v-btn>
+          </template>
         </v-layout>
       </v-card-text>
     </v-card>
@@ -64,6 +70,7 @@ import { updaterEmitter } from '@/services/updater-emitter';
 import { remote } from "electron";
 import { UpdateInfo } from 'electron-updater';
 import { ProgressInfo } from '../../shared/updater/types';
+import { isDevelopment } from '../../constants';
 
 const { app } = remote;
 
@@ -105,7 +112,12 @@ export default Vue.extend({
       return this.$store.getters['updates/downloadProgress'];
     },
     progressPercent(): number {
-      return this.downloadProgress ? Math.round(this.downloadProgress.percent) : 0;
+      return this.downloadProgress
+        ? Math.round(this.downloadProgress.percent)
+        : 0;
+    },
+    isDevelopment(): boolean {
+      return isDevelopment;
     },
   },
   methods: {

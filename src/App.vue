@@ -40,6 +40,7 @@ import { updaterEmitter } from '@/services/updater-emitter';
 import { RawProcess } from './store/processes/types';
 import { AppIpcRenderer } from './shared/app-ipc/renderer';
 import { StoreSettings } from './shared/defaults';
+import { isDevelopment } from './constants';
 
 interface Data {
   dofusWindowEmitter: DofusWindowEmitter;
@@ -66,8 +67,10 @@ export default Vue.extend({
     this.appIpcEmitter.on('toggle-shortcuts', this.toggleShortcuts);
     this.dofusWindowEmitter.on('disconnected', this.onDofusDisconnected);
     this.toggleShortcuts(this.shortcutsEnabled);
-    if (this.sharedSettings.checkForUpdatesOnStart) {
-      this.$store.dispatch('updates/lookForUpdates');
+    if (!isDevelopment) {
+      if (this.sharedSettings.checkForUpdatesOnStart) {
+        this.$store.dispatch('updates/lookForUpdates');
+      }
     }
   },
   beforeDestroy() {
