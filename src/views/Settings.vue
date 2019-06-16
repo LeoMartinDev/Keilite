@@ -35,6 +35,7 @@
       ></shortcut-field>
       <v-subheader>Avancé</v-subheader>
       <v-btn @click="openLogsFile()">Ouvrir le fichier de logs</v-btn>
+      <v-btn @click="openDevTools()">Ouvrir la console developpeur</v-btn>
     </v-container>
   </v-card>
 </template>
@@ -189,6 +190,13 @@ export default Vue.extend({
         shell.openExternal(logsPath);
       } catch (error) {
         this.$log.error('Open logs file failed:', error);
+      }
+    },
+    openDevTools() {
+      try {
+        remote.getCurrentWindow().webContents.openDevTools();
+      } catch (error) {
+        this.$log.error('Open DevTools failed:', error);
       }
     },
   },
